@@ -1,5 +1,8 @@
+# Conntection web-server library
 from pydantic_settings import BaseSettings,SettingsConfigDict
 from pydantic import computed_field
+
+# Conntection core library
 import os
 
 # Path to backend file (project root)
@@ -28,6 +31,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra='ignore',
     )
+
 
 settings = Settings()
 

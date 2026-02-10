@@ -1,6 +1,9 @@
+# Connection main library
 from sqlalchemy.ext.asyncio import create_async_engine,async_sessionmaker,AsyncSession
 from sqlalchemy.orm import Session,sessionmaker
 from sqlalchemy import URL,create_engine,text
+
+# Connection inside package
 from app.core.config import settings
 
 # Create async_engine
@@ -21,4 +24,8 @@ async_session_maker = async_sessionmaker(
 
 async def get_db():
     async with async_session_maker() as session:
-        yield session
+        # 100% close session if will be errors
+        try:
+            yield session
+        finally:
+            await session.close()
