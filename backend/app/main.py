@@ -1,12 +1,12 @@
 # Import main library
-from fastapi import FastAPI
+from fastapi import FastAPI,status
 
 # Import Config 'n other
 from app.core.config import settings
 
 # Import router
-from app.api.category import category
-from app.api.role import role
+from app.api.category import router as category
+from app.api.role import router as role
 
 
 # Create copy app
@@ -17,7 +17,7 @@ def get_app() -> FastAPI:
         version="1.0.0",
         debug=settings.DEBUG,
     )
-
+    
     # Connection other router
     _app.include_router(category)
     _app.include_router(role)
