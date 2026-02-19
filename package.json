@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
+    "@tailwindcss/vite": "^4.2.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.0"
+  },
+  "name": "yes",
+  "version": "v4.1.18",
+  "main": "index.js",
+  "repository": "https://github.com/KIllquestlll/furry_forum.git",
+  "author": "fortnine2incel <abdieva.eszett@gmail.com>",
+  "license": "MIT",
+  "private": true
+}
