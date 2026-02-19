@@ -13,7 +13,7 @@ from app.models.user.userModel import UserModel
 
 
 # Show all users func
-async def get_all_users(session:AsyncSession):
+async def get_all_users(session:AsyncSession) -> UserModel:
     query = (
         select(UserModel)
         .options(joinedload(UserModel.role))
@@ -31,7 +31,8 @@ async def get_all_users(session:AsyncSession):
 
     return users
 
-async def get_by_id_user(session:AsyncSession,userID:int):
+# Func for find user by id
+async def get_by_id_user(session:AsyncSession,userID:int) -> UserModel:
     query = (
         select(UserModel)
         .options(joinedload(UserModel.role))
@@ -42,3 +43,8 @@ async def get_by_id_user(session:AsyncSession,userID:int):
     user = result.scalar_one_or_none()
 
     return user
+
+
+# Func for updating role user by id
+async def update_role_by_id(session:AsyncSession,userID:int):
+    pass

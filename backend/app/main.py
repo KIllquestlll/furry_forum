@@ -1,5 +1,6 @@
 # Import main library
 from fastapi import FastAPI,status
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import Config 'n other
 from app.core.config import settings
@@ -9,6 +10,12 @@ from app.api.category import router as category
 from app.api.users.auth import router as auth
 from app.api.users.role import router as role
 from app.api.users.users import router as user
+
+
+origins = [
+    "http://localhost:3000",     
+]
+
 
 # Create copy app
 def get_app() -> FastAPI:
@@ -28,6 +35,14 @@ def get_app() -> FastAPI:
     return _app
 
 app = get_app()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Разрешить запросы с этих адресов
+    allow_credentials=True,           # ОБЯЗАТЕЛЬНО для работы с куками!
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PUT"], # Разрешенные методы
+    allow_headers=["Content-Type", "Set-Cookie", "Authorization"], # Разрешенные заголовки
+)
 
 @app.get("/ping")
 async def ping() -> dict[str,str | list]:
