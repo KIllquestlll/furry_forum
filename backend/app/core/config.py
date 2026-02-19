@@ -9,16 +9,20 @@ import os
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),"../../"))
 
 class Settings(BaseSettings):
-    # Main settings
+    # DATABASE config
     DB_HOST: str
     DB_PORT: int = 5432
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
 
-    # Other settings
+    # JWT config
     SECRET_KEY: str
-    DEBUG: bool = True
+    ALGORITHM:str
+    ACCESS_TOKEN_EXPIRE_MINUTES:str
+
+    # Other config
+    DEBUG:bool
     
     @computed_field
     @property

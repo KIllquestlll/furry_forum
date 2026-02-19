@@ -3,7 +3,7 @@ run:
 
 
 migration:
-	alembic revision --autogenerate -m "$(m)"
+	alembic revision --autogenerate 
 
 
 migrate:
