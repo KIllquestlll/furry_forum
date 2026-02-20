@@ -1,4 +1,21 @@
 .Searchbar {
   margin-left: auto;
-  margin-right: 0;
+  margin-left: 40rem;
+  margin-right: 0.1rem;
+  width: fit-content;
+  display: flex;
+}
+.SearchInput {
+  padding: 15px 15px;
+  border:1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  width: 300px;
+}
+
+.SearchButton {
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: red;
+  border-radius: 4px 4px 4px;
 }

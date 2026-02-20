@@ -36,7 +36,7 @@ async def create_new_user(session: AsyncSession, userData: UserCreate) -> UserMo
         **user_data_dict,
         password=hashed_password,
         is_banned=False,
-        role_id=4  
+        role_id=1 
     )
 
     session.add(new_user)

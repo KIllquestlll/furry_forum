@@ -68,3 +68,5 @@ if context.is_offline_mode():
 else:
     run_migrations_online()
 
+print("DATABASE:", settings.database_url)
+

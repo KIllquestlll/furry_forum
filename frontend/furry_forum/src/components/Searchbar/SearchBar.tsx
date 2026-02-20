@@ -1,6 +1,6 @@
-"use client";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
+import styles from './SearchBar.module.css';
 
 function SearchBar() {
   const [input, setInput] = useState("");
@@ -16,19 +16,19 @@ function SearchBar() {
   return ( 
     <form
       onSubmit={handleSearch}
-      className=""
+      className={styles.Searchbar}
     >
       <input
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder='Search'
-        className="" />
+        className={styles.SearchInput} />
       <button type="submit"
         disabled={!input}
-        className="text-blue-400 disabled:text-gray-400"
+        className={styles.SearchButton}
       >
-        Search
+        🔍
       </button>
     </form>
   );

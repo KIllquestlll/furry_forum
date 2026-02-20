@@ -1,7 +1,12 @@
+import SearchBar from "../components/Searchbar/SearchBar"
+import UserSection from "../components/UserSection/UserSection"
 
 function Home() {
   return (
-    <div>Home</div>
+    <>
+    <SearchBar />
+    <UserSection />
+    <div>Home</div></>
   )
 }
 

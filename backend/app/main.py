@@ -13,7 +13,7 @@ from app.api.users.users import router as user
 
 
 origins = [
-    "http://localhost:3000",     
+    "http://localhost:5173",     
 ]
 
 
