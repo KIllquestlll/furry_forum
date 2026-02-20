@@ -3,6 +3,9 @@ from sqlalchemy.orm import Mapped,mapped_column,relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import String,ForeignKey
 
+# Connection other library
+from typing import List,Optional
+
 # Import package
 from app.db.database import Base
 
@@ -25,3 +28,4 @@ class UserModel(Base):
 
     # RelationShip fields
     role:Mapped["RoleModel"] = relationship(back_populates="users")
+    posts:Mapped[List["PostModel"]] = relationship(back_populates="author")

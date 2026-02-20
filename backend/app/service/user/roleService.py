@@ -92,6 +92,7 @@ async def update_by_id(session:AsyncSession,roleData:role,roleID:int) -> RoleMod
             status_code=404,
             detail="Role not found"
         )
+    
     # Convert data from dict,exclude that don't sent
     update_data = roleData.model_dump(exclude_unset=True)
 

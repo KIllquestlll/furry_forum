@@ -7,3 +7,4 @@ class role(BaseModel):
     title: str = "guest"
 
     model_config = ConfigDict(from_attributes=True)
+

@@ -47,3 +47,7 @@ class UserCreateResponse(BaseModel):
     user:UserRead
     access_token:str
     token_type:str = "bearer"
+
+
+class UpdateRoleScheme(BaseModel):
+    new_role_id:int

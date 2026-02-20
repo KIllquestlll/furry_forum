@@ -1,7 +1,9 @@
 # Connection main library
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
+from fastapi import HTTPException,Depends,Request
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import joinedload
+from jose import JWTError,jwt
 from sqlalchemy import select,or_
 
 
@@ -9,6 +11,11 @@ from sqlalchemy import select,or_
 from app.schemas.user.userScheme import UserCreate
 from app.models.user.userModel import UserModel
 from app.core.security import get_password_hash,verify_password
+from app.core.config import settings
+from app.db.database import get_db
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 # Registery func
 async def create_new_user(session: AsyncSession, userData: UserCreate) -> UserModel:
@@ -79,3 +86,45 @@ async def authenticate_user(session:AsyncSession,userData:UserCreate):
         return False
     
     return user
+
+async def get_token(request:Request):
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        return auth_header.split(" ")[1]
+    
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Token missing"
+        )
+    return token
+
+
+async def get_current_user(token:str = Depends(get_token),
+                           session:AsyncSession = Depends(get_db),) -> UserModel:
+    
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="COuld not validate credential",
+        headers={"WWW-Authenticate":"Bearer"}
+    )
+
+    try:
+        payload = jwt.decode(token,settings.SECRET_KEY,algorithms=[settings.ALGORITHM])
+        user_id:str = payload.get("sub")
+
+        if user_id is None:
+            raise credentials_exception
+        
+    except JWTError:
+        raise credentials_exception
+    
+    query = select(UserModel).where(UserModel.id == int(user_id))
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise credentials_exception
+
+    return user 

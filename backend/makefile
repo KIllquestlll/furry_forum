@@ -7,4 +7,4 @@ migration:
 
 
 migrate:
-	alembic upgrade head
+	alembic revision --autogenerate 
