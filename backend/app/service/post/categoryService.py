@@ -62,6 +62,7 @@ async def GettingByIdCategory(session:AsyncSession,
             status_code=404,
             detail="Роли с таким id не существует!"
         )
+    
     return category
 
 
@@ -85,6 +86,17 @@ async def DeleteByIdCategory(session:AsyncSession,
         "status":"success",
         "message":f"{CategoryID} has been deleted"
     }
+
+async def DeleteAllCategory(session:AsyncSession):
+    query = delete(CategoryModel)
+    await session.execute(query)
+    await session.commit()
+
+    return {
+        "status":"success",
+        "message":"All category has been deleted"
+    }
+
 
 async def UpdateByIdCategory(session:AsyncSession,
                              CategoryData:CategoryScheme,

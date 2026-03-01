@@ -19,8 +19,7 @@ class UserCreate(BaseModel):
             raise ValueError("Doesn't match!")
         return self
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Show users or user

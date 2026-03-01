@@ -102,3 +102,5 @@ async def update_role_user_by_id(session:AsyncSession,userID:int,newRoleID:int):
             status_code=500,
             detail="Ошибка при смене роли!"
         )
+
+

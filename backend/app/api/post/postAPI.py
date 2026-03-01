@@ -9,7 +9,9 @@ from typing import Annotated
 # Import package
 from app.schemas.post.postScheme import PostRead
 from app.models.user.userModel import UserModel
+from app.schemas.user.userScheme import UserRead
 from app.service.post.postService import *
+from app.core.utils import RoleChecker,allow_admin
 from app.service.user.authService import get_current_user
 from app.db.database import get_db
 
@@ -25,22 +27,28 @@ AsyncDepends = Annotated[AsyncSession,Depends(get_db)]
 async def CreatePost(
     title: str = Form(...),
     text: str = Form(...),
+    category_name: str = Form(...),
     files: List[UploadFile] = File(None), 
     session: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
 ):
-    post_data = PostCreate(title=title, text=text)
+    post_data = PostCreate(title=title, text=text,category_name=category_name)
     
     return await create_new_post(session, post_data, current_user.id, files)
 
 # GET-query
-@router.get("/show")
-async def ShowAllPosts(session:AsyncDepends):
-    return await show_all_post(session)
+@router.get("/show",response_model=List[PostRead])
+async def ShowAllPosts(session:AsyncDepends,current_user:UserRead = Depends(get_current_user)):
+    return await show_all_post(session,current_user.id)
+
+
+@router.get("/user/{userID}",response_model=List[PostRead])
+async def ShowPostUser(session:AsyncDepends,userID:int):
+    return await show_posts_by_userID(session,userID)
 
 
 
 # DELETE-query
 @router.delete("/delete/all")
-async def DeleteAllPost(session:AsyncDepends):
+async def DeleteAllPost(session:AsyncDepends,current_user_role:UserRead = Depends(allow_admin)):
     return await delete_all_posts(session)

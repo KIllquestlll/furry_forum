@@ -12,6 +12,8 @@ from app.api.users.auth import router as auth
 from app.api.users.role import router as role
 from app.api.users.users import router as user
 from app.api.post.postAPI import router as post
+from app.api.post.commentAPI import router as comment
+from app.api.post.likeAPI import router as like
 
 
 origins = [
@@ -34,6 +36,8 @@ def get_app() -> FastAPI:
     _app.include_router(auth)
     _app.include_router(user)
     _app.include_router(post)
+    _app.include_router(comment)
+    _app.include_router(like)
 
     return _app
 

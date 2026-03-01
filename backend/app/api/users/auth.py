@@ -11,6 +11,7 @@ from app.schemas.user.userScheme import *
 from app.models.user.userModel import UserModel
 from app.service.user.authService import create_new_user,authenticate_user,get_current_user
 from app.core.security import create_access_token
+from app.core.logger import login_logger
 from app.db.database import get_db
 
 
@@ -47,6 +48,7 @@ async def register(userData:UserCreate,session:AsyncDepends,response:Response) -
 
 # Login route
 @router.post("/login",response_model=UserCreateResponse)
+@login_logger
 async def login(userData:UserCreate,session:AsyncDepends,response:Response):
     user = await authenticate_user(session,userData)
 

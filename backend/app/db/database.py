@@ -1,6 +1,7 @@
 # Connection main library
 from sqlalchemy.ext.asyncio import create_async_engine,async_sessionmaker,AsyncSession
 from sqlalchemy.orm import Session,sessionmaker
+from sqlalchemy.pool import NullPool
 from sqlalchemy import URL,create_engine,text
 from sqlalchemy.orm import DeclarativeBase
 
@@ -9,9 +10,10 @@ from app.core.config import settings
 
 # Create async_engine
 engine = create_async_engine(
-    settings.database_url, # DSN 
-    pool_size=5,           #always-open connection
-    max_overflow=10,       #additional connection
+    settings.database_url, #DSN 
+    # pool_size=5,           #always-open connection
+    # max_overflow=10,       #additional connection
+    poolclass=NullPool,
     echo=True,             #debugging that allows view query in console
 )
 

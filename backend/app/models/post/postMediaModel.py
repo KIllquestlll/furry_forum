@@ -14,5 +14,5 @@ class PostMediaModel(Base):
     file_path:Mapped[str] = mapped_column(String(500),nullable=False)
     file_type:Mapped[str] = mapped_column(String(20))
 
-    post_id:Mapped[int] = mapped_column(ForeignKey("posts.id",ondelete="CASCADE"))
+    post_id:Mapped[int] = mapped_column(ForeignKey("posts.id",ondelete="CASCADE"),nullable=False)
     post:Mapped["PostModel"] = relationship(back_populates="media")

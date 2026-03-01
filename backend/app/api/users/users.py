@@ -8,6 +8,8 @@ from typing import Annotated
 # Import package
 from app.schemas.user.userScheme import *
 from app.service.user.userService import *
+from app.core.utils import RoleChecker,allow_admin
+from app.schemas.user.userScheme import UserRead
 from app.db.database import get_db
 
 
@@ -31,11 +33,12 @@ async def ShowUserById(session:AsyncDepends,userID:int):
 
 # DELETE-query
 @router.delete("/delete/all")
-async def DeleteAllUsers(session:AsyncDepends):
+async def DeleteAllUsers(session:AsyncDepends,current_user_role:UserRead = Depends(allow_admin)):
     return await delete_all_users(session)
 
 
 # UPDATE-query
 @router.patch("/update/role/{id}")
-async def UpdateRoleByUserID(id:int,userData:UpdateRoleScheme,session:AsyncDepends):
+async def UpdateRoleByUserID(id:int,userData:UpdateRoleScheme,session:AsyncDepends,
+                             current_user_role:UserRead = Depends(allow_admin)):
     return await update_role_user_by_id(session,id,userData.new_role_id)

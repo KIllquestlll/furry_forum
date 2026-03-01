@@ -7,6 +7,8 @@ from typing import List,Optional,Annotated
 
 # Import package
 from app.schemas.user.roleScheme import role
+from app.schemas.user.userScheme import UserRead
+from app.core.utils import RoleChecker,allow_admin
 from app.db.database import get_db
 from app.models.user.roleModel import RoleModel
 from app.service.user.roleService import *
@@ -19,8 +21,9 @@ router = APIRouter(prefix="/api/role",
 AsyncDepends = Annotated[AsyncSession,Depends(get_db)]
 
 # POST query
-@router.post("/create")
-async def createRole(roleData:role,session:AsyncDepends):
+@router.post("/create",)
+async def createRole(roleData:role,session:AsyncDepends,
+                     current_user_role:UserRead = Depends(allow_admin)):
     try:
         result = await create_new_role(session,roleData)
         return result
@@ -28,8 +31,7 @@ async def createRole(roleData:role,session:AsyncDepends):
         raise HTTPException(
             status_code=400,
             detail=f"{str(e)}"
-        )
-        
+        )      
     
 
 
@@ -54,7 +56,8 @@ async def get_id_role(session:AsyncDepends,RoleID:int):
 
 # DELETE query
 @router.delete("/delete/{id}")
-async def delete_by_roles(session:AsyncDepends,roleID:int):
+async def delete_by_roles(session:AsyncDepends,roleID:int,
+                          current_user_role:UserRead = Depends(allow_admin)):
     return await delete_by_id(session,roleID)
 
 
@@ -62,7 +65,8 @@ async def delete_by_roles(session:AsyncDepends,roleID:int):
 
 # PATCH query
 @router.patch("/update/{id}",response_model=role)
-async def update_by_roles(session:AsyncDepends,roleData:role,roleID:int):
+async def update_by_roles(session:AsyncDepends,roleData:role,roleID:int,
+                          current_user_role:UserRead = Depends(allow_admin)):
     return await update_by_id(session,roleData,roleID)
 
 

@@ -1,5 +1,5 @@
 # Connection main library
-from fastapi import HTTPException,UploadFile,Form,File
+from fastapi import HTTPException,UploadFile,Form,File,Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select,delete,exists
@@ -11,8 +11,13 @@ import uuid
 
 # Import package
 from app.schemas.post.postScheme import *
+from app.schemas.user.userScheme import UserRead
 from app.models.post.postModel import PostModel
+from app.models.user.userModel import UserModel
+from app.models.post.CommentModel import CommentModel
+from app.models.post.categoryModel import CategoryModel
 from app.models.post.postMediaModel import PostMediaModel
+from app.service.user.authService import get_current_user
 from app.core.utils import generate_unique_slug
 
 
@@ -32,11 +37,24 @@ async def create_new_post(session:AsyncSession,
             status_code=400,detail="Slug already exists"
         )
     
+
+    query = select(CategoryModel).where(CategoryModel.title == postData.category_name)
+    result = await session.execute(query)
+    category = result.scalar_one_or_none()
+
+
+    if not category:
+        raise HTTPException(
+            status_code=404,
+            detail="Category not found"
+        )
+
     new_post = PostModel(
         title=postData.title,
         text=postData.text,
         slug=slug,
         author_id=userId,
+        category_id=category.id
     )
 
     try:
@@ -45,8 +63,8 @@ async def create_new_post(session:AsyncSession,
 
         if files:
             upload_dir = "static/uploads"
-        os.makedirs(upload_dir, exist_ok=True)
-
+            os.makedirs(upload_dir, exist_ok=True) #Сдвинул  было на один уровень ниже  
+                     
         for file in files:
             
             file_ext = os.path.splitext(file.filename)[1]
@@ -74,7 +92,9 @@ async def create_new_post(session:AsyncSession,
             select(PostModel)
             .options(
                 selectinload(PostModel.author),
-                selectinload(PostModel.media)
+                selectinload(PostModel.media),
+                selectinload(PostModel.category),
+                selectinload(PostModel.comments).selectinload(CommentModel.replies)
             )
             .where(PostModel.id == new_post.id)
         )
@@ -90,12 +110,61 @@ async def create_new_post(session:AsyncSession,
             detail="Internal server error"
         )
     
+
+
 # GET-query
-async def show_all_post(session:AsyncSession):
-    query = select(PostModel)
+async def show_all_post(session:AsyncSession,userID:int = None):
+    query = (
+        select(PostModel)
+        .options(
+            selectinload(PostModel.category),
+            selectinload(PostModel.author),
+            selectinload(PostModel.likes),
+            selectinload(PostModel.media),
+            selectinload(PostModel.comments).selectinload(CommentModel.replies),
+        )
+    )
+    result = await session.execute(query)
+    posts = result.scalars().all()
+
+    for post in posts:
+        post.likes_count = len(post.likes)
+
+        if userID:
+            post.is_liked = any(like.user_id == userID for like in post.likes)
+        else:
+            post.is_liked = False
+
+    return posts
+
+async def show_posts_by_userID(session:AsyncSession,userID:int):
+    query = select(UserModel).where(UserModel.id == userID)
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Not found user"
+        )
+    
+    query = (
+        select(PostModel)
+        .options(
+            selectinload(PostModel.category),
+            selectinload(PostModel.author),
+            selectinload(PostModel.media)
+        ).where(PostModel.author_id == userID)
+    )
     result = await session.execute(query)
 
     posts = result.scalars().all()
+
+    if not posts:
+        raise HTTPException(
+            status_code=404,
+            detail="У пользователя нет по"
+        )
 
     return posts
 

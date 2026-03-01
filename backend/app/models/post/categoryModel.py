@@ -1,6 +1,8 @@
 # Connection main library
-from sqlalchemy.orm import Mapped,mapped_column
+from sqlalchemy.orm import Mapped,mapped_column,relationship
 from sqlalchemy import String
+from typing import List
+
 # Import package
 from app.db.database import Base
 
@@ -14,4 +16,8 @@ class CategoryModel(Base):
 
     # String fields
     title:Mapped[str] = mapped_column(String(20),nullable=False,unique=True)
+
+    # One-to-many fields
+    post:Mapped[List["PostModel"]] = relationship(back_populates="category",
+                                             cascade="all,delete-orphan")
     

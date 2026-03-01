@@ -29,3 +29,7 @@ class UserModel(Base):
     # RelationShip fields
     role:Mapped["RoleModel"] = relationship(back_populates="users")
     posts:Mapped[List["PostModel"]] = relationship(back_populates="author")
+
+    comments: Mapped[List["CommentModel"]] = relationship(back_populates="author")
+
+    liked_post:Mapped[list["LikeModel"]] = relationship(back_populates="user",cascade="all,delete-orphan")

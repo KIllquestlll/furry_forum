@@ -5,9 +5,12 @@ from pydantic import BaseModel,ConfigDict
 from typing import List,Optional
 from datetime import datetime
 
+# Import package
+from app.schemas.post.categorySchema import CategoryRead
+from app.schemas.post.CommentScheme import CommentRead
+
 
 class MediaRead(BaseModel):
-    id:int
     file_path:str
     file_type:str
 
@@ -15,7 +18,6 @@ class MediaRead(BaseModel):
     
 
 class AuthorShorts(BaseModel):
-    id:int
     username:str
 
     model_config = ConfigDict(from_attributes=True)
@@ -27,13 +29,18 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    pass
+    category_name:str
 
 
 class PostRead(PostBase):
     id:int
     author:AuthorShorts
     created_at:datetime
+    category:Optional[CategoryRead] = None
+    comments:List[CommentRead]
     media:List[MediaRead] = []
+
+    likes_count:int
+    is_liked:bool = False
 
     model_config = ConfigDict(from_attributes=True)
